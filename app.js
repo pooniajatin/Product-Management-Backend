@@ -1,10 +1,14 @@
 require('dotenv').config()
 require('express-async-errors')
+
 const express  = require('express')
 const connectDB = require('./db/connect')
 const UserRoutes = require('./routes/auth')
 const app = express();
 app.use(express.json())
+const cors = require('cors');
+
+app.use(cors()); // Allow all origins (or configure it below)
 
 
 app.get('/',(req,res)=>{
