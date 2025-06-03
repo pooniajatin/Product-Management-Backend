@@ -68,45 +68,60 @@ const login = async (req, res) => {
     maxAge: 24 * 60 * 60 * 1000,
   });
 
-  await Auth.create({
-    userId: user._id,
-    isActivate: true,
-    refreshToken: refreshToken,
-  });
+  await Auth.findOneAndUpdate(
+    { userId: user._id },
+    { refreshToken: refreshToken, isActivate: true },
+    { upsert: true, new: true }
+  );
 
   res.status(200).json({ accessToken: accessToken, msg: "Login Successful" });
 };
 
 const refreshToken = async (req, res) => {
   const token = req.cookies?.refreshToken;
-  
+
   if (!token) {
     return res.status(401).json({ msg: "Refresh token missing" });
   }
 
-  jwt.verify(
-    token,
-    process.env.JWT_REFRESH_SECRET_KEY,
-    (err, decoded) => {
-      if (err) {
-        return res.status(406).json({ msg: "Unauthorized" });
-      }
-      
-      const userId = decoded.UserId;
-      const email = decoded.Name;
-
-      const accessToken = jwt.sign(
-        { UserId: userId, Name: email },
-        process.env.JWT_ACCESS_SECRET_KEY,
-        { expiresIn: "10m" }
-      );
-
-      return res.status(200).json({ accessToken });
+  jwt.verify(token, process.env.JWT_REFRESH_SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(406).json({ msg: "Unauthorized" });
     }
-  );
+
+    const userId = decoded.UserId;
+    const email = decoded.Name;
+
+    const accessToken = jwt.sign(
+      { UserId: userId, Name: email },
+      process.env.JWT_ACCESS_SECRET_KEY,
+      { expiresIn: "10m" }
+    );
+
+    return res.status(200).json({ accessToken });
+  });
+};
+const logout = async (req, res) => {
+  const token = req.cookies?.refreshToken;
+  if (token) {
+    await Auth.findOneAndUpdate(
+      { userId: req.user.userId },
+      { isActivate: false },
+      { upsert: true, new: true }
+    );
+  }
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "Lax",
+    secure: false,
+  });
+
+  return res.status(200).json({ msg: "Logged out successfully" });
 };
 module.exports = {
   register,
   login,
-  refreshToken
+  refreshToken,
+  logout,
 };
