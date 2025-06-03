@@ -8,7 +8,11 @@ const app = express();
 app.use(express.json())
 const cors = require('cors');
 
-app.use(cors()); // Allow all origins (or configure it below)
+app.use(cors({
+      origin: 'http://localhost:4200',
+       credentials: true,
+
+})); // Allow all origins (or configure it below)
 
 
 app.get('/',(req,res)=>{
