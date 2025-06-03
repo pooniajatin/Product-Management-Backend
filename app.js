@@ -4,8 +4,10 @@ require('express-async-errors')
 const express  = require('express')
 const connectDB = require('./db/connect')
 const UserRoutes = require('./routes/auth')
+const cookieParser = require("cookie-parser");
 const app = express();
 app.use(express.json())
+app.use(cookieParser());
 const cors = require('cors');
 
 app.use(cors({

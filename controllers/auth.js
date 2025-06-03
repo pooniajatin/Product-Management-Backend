@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const Auth = require("../models/auth");
 const register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -44,19 +45,68 @@ const login = async (req, res) => {
   if (!isPasswordCorrect) {
     return res.status(401).json({ msg: "Enter Correct Password" });
   }
-  const token = jwt.sign(
+  const accessToken = jwt.sign(
     {
       UserId: user._id,
       Name: user.email,
     },
-    process.env.JWT_SECRET_KEY,
+    process.env.JWT_ACCESS_SECRET_KEY,
     {
-      expiresIn: "30d",
+      expiresIn: "10m",
     }
   );
-  res.status(200).json({Token:token})
+  const refreshToken = jwt.sign(
+    { UserId: user._id, Name: user.email },
+    process.env.JWT_REFRESH_SECRET_KEY,
+    { expiresIn: "1d" }
+  );
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "Lax",
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  await Auth.create({
+    userId: user._id,
+    isActivate: true,
+    refreshToken: refreshToken,
+  });
+
+  res.status(200).json({ accessToken: accessToken, msg: "Login Successful" });
+};
+
+const refreshToken = async (req, res) => {
+  const token = req.cookies?.refreshToken;
+  
+  if (!token) {
+    return res.status(401).json({ msg: "Refresh token missing" });
+  }
+
+  jwt.verify(
+    token,
+    process.env.JWT_REFRESH_SECRET_KEY,
+    (err, decoded) => {
+      if (err) {
+        return res.status(406).json({ msg: "Unauthorized" });
+      }
+      
+      const userId = decoded.UserId;
+      const email = decoded.Name;
+
+      const accessToken = jwt.sign(
+        { UserId: userId, Name: email },
+        process.env.JWT_ACCESS_SECRET_KEY,
+        { expiresIn: "10m" }
+      );
+
+      return res.status(200).json({ accessToken });
+    }
+  );
 };
 module.exports = {
   register,
   login,
+  refreshToken
 };
