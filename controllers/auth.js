@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const Auth = require("../models/auth");
+
 const register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -62,11 +63,13 @@ const login = async (req, res) => {
   );
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    sameSite: "Lax",
-    secure: false,
-    maxAge: 24 * 60 * 60 * 1000,
-  });
+  httpOnly: true,
+  sameSite: "Lax",
+  secure: false,
+  path: "/",
+  domain:'localhost',
+  maxAge: 24 * 60 * 60 * 1000,
+});
 
   await Auth.findOneAndUpdate(
     { userId: user._id },
@@ -103,14 +106,15 @@ const refreshToken = async (req, res) => {
 };
 const logout = async (req, res) => {
   const token = req.cookies?.refreshToken;
+  console.log("tokennnnnnnn", req?.headers);
   if (token) {
-    await Auth.findOneAndUpdate(
+    const userResponse = await Auth.findOneAndUpdate(
       { userId: req.user.userId },
       { isActivate: false },
       { upsert: true, new: true }
     );
+    console.log(req.user, userResponse);
   }
-
   res.clearCookie("refreshToken", {
     httpOnly: true,
     sameSite: "Lax",
