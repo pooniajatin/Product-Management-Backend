@@ -89,7 +89,7 @@ const refreshToken = async (req, res) => {
 
   jwt.verify(token, process.env.JWT_REFRESH_SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(406).json({ msg: "Unauthorized" });
+      return res.status(401).json({ msg: "Unauthorized" });
     }
 
     const userId = decoded.UserId;
