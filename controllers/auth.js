@@ -106,7 +106,7 @@ const refreshToken = async (req, res) => {
 };
 const logout = async (req, res) => {
   const token = req.cookies?.refreshToken;
-  console.log("tokennnnnnnn", req?.headers);
+  
   if (token) {
     const userResponse = await Auth.findOneAndUpdate(
       { userId: req.user.userId },

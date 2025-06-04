@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
     const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY);
 
     req.user = { userId: payload.UserId, name: payload.Name };
-    req.token = token
+    
     next();
   } catch (error) {
     return res.status(401).json({ msg: "Authentication invalid" });
