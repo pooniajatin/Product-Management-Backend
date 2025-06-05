@@ -53,7 +53,7 @@ const login = async (req, res) => {
     },
     process.env.JWT_ACCESS_SECRET_KEY,
     {
-      expiresIn: "10m",
+      expiresIn: "30m",
     }
   );
   const refreshToken = jwt.sign(
@@ -82,7 +82,7 @@ const login = async (req, res) => {
 
 const refreshToken = async (req, res) => {
   const token = req.cookies?.refreshToken;
-
+  
   if (!token) {
     return res.status(401).json({ msg: "Refresh token missing" });
   }
@@ -98,7 +98,7 @@ const refreshToken = async (req, res) => {
     const accessToken = jwt.sign(
       { UserId: userId, Name: email },
       process.env.JWT_ACCESS_SECRET_KEY,
-      { expiresIn: "10m" }
+      {expiresIn: "30m"} 
     );
 
     return res.status(200).json({ accessToken });
@@ -113,7 +113,7 @@ const logout = async (req, res) => {
       { isActivate: false },
       { upsert: true, new: true }
     );
-    console.log(req.user, userResponse);
+    //console.log(req.user, userResponse);
   }
   res.clearCookie("refreshToken", {
     httpOnly: true,
