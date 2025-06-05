@@ -4,6 +4,7 @@ require('express-async-errors')
 const express  = require('express')
 const connectDB = require('./db/connect')
 const UserRoutes = require('./routes/auth')
+const ProductRoutes = require('./routes/product')
 const cookieParser = require("cookie-parser");
 const app = express();
 app.use(express.json())
@@ -21,6 +22,7 @@ app.get('/',(req,res)=>{
     res.send('<h1>HomePage</h1>')
 })
 app.use('/api/v1',UserRoutes);
+app.use('/api/v1',ProductRoutes);
 
 const start = async ()=>{
   try {
