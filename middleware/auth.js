@@ -7,7 +7,7 @@ const auth = (req, res, next) => {
     return res.status(401).json({ msg: "Authentication invalid" });
   }
   const token = authHeader.split(" ")[1];
-  console.log('tokennmiddleware',token);
+  //console.log('tokennmiddleware',token);
   
   try {
     const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY);

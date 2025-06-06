@@ -1,6 +1,5 @@
 const Product = require('../models/product');
 
-// GET all products with filtering, sorting, and search
 const getAllProduct = async (req, res) => {
     const { name, sort, minPrice, maxPrice, rating } = req.query;
     const queryObj = {};
@@ -32,7 +31,6 @@ const getAllProduct = async (req, res) => {
     res.status(200).json({ products, nbHits: products.length });
 };
 
-// GET single product by ID
 const getProduct = async (req, res) => {
     const { id: productID } = req.params;
     const product = await Product.findById(productID);
@@ -44,13 +42,11 @@ const getProduct = async (req, res) => {
     res.status(200).json({ product });
 };
 
-// POST create a new product
 const createProduct = async (req, res) => {
     const product = await Product.create(req.body);
-    res.status(201).json({ product });
+    res.status(201).json({ msg:"Successfully Created Product..." });
 };
 
-// DELETE product by ID
 const deleteProduct = async (req, res) => {
     const { id: productID } = req.params;
     const product = await Product.findByIdAndDelete(productID);
@@ -62,7 +58,6 @@ const deleteProduct = async (req, res) => {
     res.status(200).json({ msg: "Product deleted successfully", product });
 };
 
-// PUT update product by ID
 const updateProduct = async (req, res) => {
     const { id: productID } = req.params;
 
