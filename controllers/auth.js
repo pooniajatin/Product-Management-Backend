@@ -123,9 +123,15 @@ const logout = async (req, res) => {
 
   return res.status(200).json({ msg: "Logged out successfully" });
 };
+const deleteuser = async (req,res)=>{
+  const {id} = req.params;
+  user - User.findByIdAndDelete(id);
+  res.status(200).jsom({msg:"User Deleted Succesfully"})
+}
 module.exports = {
   register,
   login,
   refreshToken,
   logout,
+  deleteuser
 };
