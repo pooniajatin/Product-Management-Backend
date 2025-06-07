@@ -4,6 +4,9 @@ const Profile = require("../models/profile");
 const getProfile = async (req, res) => {
   const { id } = req.params;
   const profile = await Profile.findById(id);
+  if(!profile) {
+    return res.status(404).json({msg:"Not found"})
+  }
   res.status(200).json({ profile });
 };
 const createProfile = async (req, res) => {
@@ -12,12 +15,18 @@ const createProfile = async (req, res) => {
 };
 const deleteProfile = async (req, res) => {
   const { id } = req.params;
-  await Profile.findByIdAndDelete(id);
+   const profile =await Profile.findByIdAndDelete(id);
+  if(!profile) {
+    return res.status(404).json({msg:"Not found"})
+  }
   res.status(200).json({ msg: "Deleted" });
 };
 const updateProfile = async (req, res) => {
   const { id } = req.params;
-  await Profile.findByIdAndUpdate(id, req.body);
+   const profile =await Profile.findByIdAndUpdate(id, req.body);
+  if(!profile) {
+    return res.status(404).json({msg:"Not found"})
+  }
   res.status(200).json({ msg: "Profile Updated Successfully" });
 };
 module.exports = {
