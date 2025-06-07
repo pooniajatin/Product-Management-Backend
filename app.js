@@ -5,6 +5,7 @@ const express  = require('express')
 const connectDB = require('./db/connect')
 const UserRoutes = require('./routes/auth')
 const ProductRoutes = require('./routes/product')
+const ProfileRoutes = require('./routes/profile')
 const cookieParser = require("cookie-parser");
 const app = express();
 app.use(express.json())
@@ -23,6 +24,7 @@ app.get('/',(req,res)=>{
 })
 app.use('/api/v1',UserRoutes);
 app.use('/api/v1',ProductRoutes);
+app.use('/api/v1',ProfileRoutes);
 
 const start = async ()=>{
   try {
