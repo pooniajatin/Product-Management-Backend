@@ -10,8 +10,8 @@ const {
 const auth = require("../middleware/auth");
 
 router.get("/products",auth ,getAllProduct);
-router.get("/products/:id", getProduct);
-router.post("/products", createProduct);
-router.delete("/products/:id", deleteProduct);
-router.patch("/products/:id", updateProduct);
+router.get("/products/:id",auth, getProduct);
+router.post("/products",auth, createProduct);
+router.delete("/products/:id",auth, deleteProduct);
+router.patch("/products/:id",auth, updateProduct);
 module.exports = router;
