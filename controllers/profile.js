@@ -7,7 +7,7 @@ const getProfile = async (req, res) => {
   if(!profile) {
     return res.status(404).json({msg:"Not found"})
   }
-  res.status(200).json({ profile });
+  res.status(200).json({profile });
 };
 const createProfile = async (req, res) => {
   const profile = await Profile.create(req.body);

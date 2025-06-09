@@ -1,82 +1,82 @@
-const Product = require('../models/product');
+const Product = require("../models/product");
 
 const getAllProduct = async (req, res) => {
-    const { name, sort, minPrice, maxPrice, rating } = req.query;
-    const queryObj = {};
+  const { name, sort, minPrice, maxPrice, rating } = req.query;
+  const queryObj = {};
 
-    if (name) {
-        queryObj.name = { $regex: name, $options: 'i' };
-    }
+  if (name) {
+    queryObj.name = { $regex: name, $options: "i" };
+  }
 
-    if (minPrice || maxPrice) {
-        queryObj.price = {};
-        if (minPrice) queryObj.price.$gte = Number(minPrice);
-        if (maxPrice) queryObj.price.$lte = Number(maxPrice);
-    }
+  if (minPrice || maxPrice) {
+    queryObj.price = {};
+    if (minPrice) queryObj.price.$gte = Number(minPrice);
+    if (maxPrice) queryObj.price.$lte = Number(maxPrice);
+  }
 
-    if (rating) {
-        queryObj.rating = { $gte: Number(rating) };
-    }
+  if (rating) {
+    queryObj.rating = { $gte: Number(rating) };
+  }
 
-    let result = Product.find(queryObj);
+  let result = Product.find(queryObj);
 
-    if (sort) {
-        const sortList = sort.split(',').join(' ');
-        result = result.sort(sortList);
-    } else {
-        result = result.sort('createdAt');
-    }
+  if (sort) {
+    const sortList = sort.split(",").join(" ");
+    result = result.sort(sortList);
+  } else {
+    result = result.sort("createdAt");
+  }
 
-    const products = await result;
-    res.status(200).json({ products, nbHits: products.length });
+  const products = await result;
+  res.status(200).json({ products, nbHits: products.length });
 };
 
 const getProduct = async (req, res) => {
-    const { id: productID } = req.params;
-    const product = await Product.findById(productID);
+  const { id: productID } = req.params;
+  const product = await Product.findById(productID);
 
-    if (!product) {
-        return res.status(404).json({ msg: "No product with this ID" });
-    }
+  if (!product) {
+    return res.status(404).json({ msg: "No product with this ID" });
+  }
 
-    res.status(200).json({ product });
+  res.status(200).json({ product });
 };
 
 const createProduct = async (req, res) => {
-    const product = await Product.create(req.body);
-    res.status(201).json({ msg:"Successfully Created Product..." });
+  const product = await Product.create(req.body);
+  res.status(201).json({ msg: "Successfully Created Product..." });
 };
 
 const deleteProduct = async (req, res) => {
-    const { id: productID } = req.params;
-    const product = await Product.findByIdAndDelete(productID);
+  const { id: productID } = req.params;
+  const product = await Product.findByIdAndDelete(productID);
 
-    if (!product) {
-        return res.status(404).json({ msg: "No product with this ID to delete" });
-    }
+  if (!product) {
+    return res.status(404).json({ msg: "No product with this ID to delete" });
+  }
 
-    res.status(200).json({ msg: "Product deleted successfully", product });
+  res.status(200).json({ msg: "Product deleted successfully", product });
 };
 
 const updateProduct = async (req, res) => {
-    const { id: productID } = req.params;
+  const { id: productID } = req.params;
 
-    const product = await Product.findByIdAndUpdate(productID, req.body, {
-        new: true,
-        runValidators: true,
-    });
+  const product = await Product.findByIdAndUpdate(productID, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
-    if (!product) {
-        return res.status(404).json({ msg: "No product with this ID to update" });
-    }
+  if (!product) {
+    return res.status(404).json({ msg: "No product with this ID to update" });
+  }
 
-    res.status(200).json({ product });
+  res.status(200).json({ product });
 };
 
 module.exports = {
-    getAllProduct,
-    createProduct,
-    deleteProduct,
-    updateProduct,
-    getProduct,
+  getAllProduct,
+  createProduct,
+  deleteProduct,
+  updateProduct,
+  getProduct,
 };

@@ -5,12 +5,13 @@ const {
   login,
   register,
   refreshToken,
-  logout
+  logout,
+  deleteuser
 } = require('../controllers/auth')
-const dummy = require('../controllers/dummy')
+
 router.post('/login',login);
 router.post('/register',register);
 router.post('/refreshtoken',refreshToken);
 router.post('/logout',auth ,logout)
-router.get('/dummy',auth,dummy)
+router.delete('/delete/:id',deleteuser)
 module.exports = router;

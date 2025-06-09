@@ -6,9 +6,9 @@ const {
   deleteProfile,
   updateProfile,
 } = require("../controllers/profile");
-
-router.get('/profile/:id',getProfile)
-router.post('/profile',createProfile),
-router.delete('/profile/:id',deleteProfile)
-router.patch('/profile/:id',updateProfile)
+const auth = require('../middleware/auth')
+router.get('/profile/:id',auth,getProfile)
+router.post('/profile',auth,createProfile),
+router.delete('/profile/:id',auth,deleteProfile)
+router.patch('/profile/:id',auth,updateProfile)
 module.exports = router

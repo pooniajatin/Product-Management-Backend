@@ -20,9 +20,14 @@ const profile = new mongoose.Schema({
   dob:{
     type: Date
   },
-  profilephoto:{
+  profilePhoto:{
     type:String
   },
+  userId:{
+    type : String,
+    required:[true],
+    unique:true
+  }
   
 
 } ,{timestamps:true})

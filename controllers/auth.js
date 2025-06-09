@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const Auth = require("../models/auth");
+const Profile = require('../models/profile');
+
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -26,10 +28,19 @@ const register = async (req, res) => {
     email,
     password: hashedPassword,
   });
-
+  const  body = {
+     name:user.name,
+    email:user.email,
+     userId:user._id,
+     
+  }
+  const profile =  await Profile.create(body)
+  
   res.status(201).json({
     msg: "User registered successfully",
     user: { name: user.name, email: user.email },
+    profile:{profile},
+   
   });
 };
 
@@ -76,8 +87,8 @@ const login = async (req, res) => {
     { refreshToken: refreshToken, isActivate: true },
     { upsert: true, new: true }
   );
-
-  res.status(200).json({ accessToken: accessToken, msg: "Login Successful" });
+   const profile = await Profile.findOne({ userId: user._id });
+  res.status(200).json({ accessToken: accessToken, msg: "Login Successful",profile });
 };
 
 const refreshToken = async (req, res) => {
@@ -125,8 +136,8 @@ const logout = async (req, res) => {
 };
 const deleteuser = async (req,res)=>{
   const {id} = req.params;
-  user - User.findByIdAndDelete(id);
-  res.status(200).jsom({msg:"User Deleted Succesfully"})
+  await User.findByIdAndDelete(id);
+  res.status(200).json({msg:"User Deleted Succesfully"})
 }
 module.exports = {
   register,
